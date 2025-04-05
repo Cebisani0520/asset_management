@@ -34,7 +34,7 @@ pom.xml.next
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
-.mvn/timing.properties
+backend/.mvn/timing.properties
 
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
