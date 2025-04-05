@@ -1,13 +1,13 @@
-package za.co.asset_management;
+package za.co.asset_management.department;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AssetManagementApplication {
+public class DepartmentApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AssetManagementApplication.class, args);
+		SpringApplication.run(DepartmentApplication.class, args);
 	}
 
 }
