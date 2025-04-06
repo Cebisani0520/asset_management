@@ -15,9 +15,9 @@ public abstract class BaseEvent {
     private String eventType;
     private LocalDateTime timestamp = LocalDateTime.now();
 
-    public BaseEvent(UUID eventId, String eventType, LocalDateTime timestamp) {
-        this.eventId = eventId;
-        this.eventType = eventType;
-        this.timestamp = timestamp;
-    }
+//    public BaseEvent(UUID eventId, String eventType, LocalDateTime timestamp) {
+//        this.eventId = eventId;
+//        this.eventType = eventType;
+//        this.timestamp = timestamp;
+//    }
 }
