@@ -30,10 +30,10 @@
 	</scm>
 
 	<modules>
-		<module>department-service</module>
 		<module>common-lib</module>
+        <module>department-service</module>
 
-	</modules>
+    </modules>
 
 	<properties>
 		<java.version>21</java.version>
@@ -61,6 +61,15 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+
 	</dependencies>
 
 	<dependencyManagement>
@@ -72,23 +81,6 @@
 				<version>${spring-boot-dependencies.version}</version>
 				<scope>import</scope>
 				<type>pom</type>
-			</dependency>
-<!--			<dependency>-->
-<!--				<groupId>org.springframework.boot</groupId>-->
-<!--				<artifactId>spring-boot-starter-web</artifactId>-->
-<!--				<version>${spring-boot.version}</version>-->
-<!--			</dependency>-->
-<!--			<dependency>-->
-<!--				<groupId>org.springframework.boot</groupId>-->
-<!--				<artifactId>spring-boot-starter-data-jpa</artifactId>-->
-<!--				<version>${spring-boot.version}</version>-->
-<!--			</dependency>-->
-			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>${lombok.version}</version>
-				<scope>provided</scope>
-				<optional>true</optional>
 			</dependency>
 			<!-- PostgreSQL -->
 			<dependency>
