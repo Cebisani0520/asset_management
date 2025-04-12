@@ -41,8 +41,9 @@
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<spring-boot-dependencies.version>3.3.4</spring-boot-dependencies.version>
 		<spring.boot.maven.plugin.version>3.3.4</spring.boot.maven.plugin.version>
+		<maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
 		<lombok.version>1.18.34</lombok.version>
-		<spring-kafka.version>3.9.0</spring-kafka.version>
+		<spring-kafka.version>3.3.2</spring-kafka.version>
 		<postgresql.version>42.7.3</postgresql.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -98,13 +99,27 @@
 	</dependencyManagement>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring.boot.maven.plugin.version}</version>
-			</plugin>
-		</plugins>
+		<pluginManagement>
+			<!-- Spring Boot Plugin -->
+			<plugins>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+					<version>${spring.boot.maven.plugin.version}</version>
+				</plugin>
+				<!-- Maven Compiler Plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven.compiler.plugin.version}</version>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+						<parameters>true</parameters> <!-- allows @PathVariable to resolve names -->
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 </project>
