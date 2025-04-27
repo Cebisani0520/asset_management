@@ -7,9 +7,11 @@
         <groupId>za.co</groupId>
         <artifactId>asset_management</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>department-service</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -21,7 +23,7 @@
         <dependency>
             <groupId>za.co</groupId>
             <artifactId>common-lib</artifactId>
-            <version>1.0.0</version>
+            <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
