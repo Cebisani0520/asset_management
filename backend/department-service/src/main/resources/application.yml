@@ -2,9 +2,9 @@ spring:
   application:
     name: department-service
   datasource:
-    username: 'admin_user'
-    url: jdbc:postgresql://localhost:5433/department_db
-    password: 'password99'
+    username: ${DB_USERNAME:admin_user}
+    password: ${DB_PASSWORD:password99}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/${DB_NAME:department_db}
   jpa:
     properties:
       hibernate:
@@ -18,3 +18,9 @@ spring:
 #  port: 8080
 #  servlet:
 #    context-path: /api
+
+kafka:
+  topic:
+    department-events: department-events
+debug:
+  false
