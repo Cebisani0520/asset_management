@@ -5,13 +5,26 @@ spring:
     username: ${DB_USERNAME:admin_user}
     password: ${DB_PASSWORD:password99}
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/${DB_NAME:management_db}
+  flyway:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/${DB_NAME:management_db}
+    user: ${DB_USERNAME:admin_user}
+    password: ${DB_PASSWORD:password99}
+    driver-class-name: org.postgresql.Driver
+    schemas: public
+    default-schema: public
+    baseline-on-migrate: true
+    validate-on-migrate: true # Set to false, if you want to repair migrations on startup.
+    locations: classpath:db/migrations
+    repair-on-migrate: false # Should not be used in production data, rather create new versions.
+    enabled: true
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
         format_sql: true
     hibernate:
-        ddl_auto: create
+        ddl_auto: none # Need to change 'update' to 'none' when using Flyway.
     show-sql: true
 
 #server:
