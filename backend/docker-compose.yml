@@ -1,8 +1,27 @@
+#version: '3.8'
 services:
+  department-service:
+    build:
+      context: .
+      dockerfile: department-service/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+        DB_HOST: postgres
+        DB_PORT: 5432
+        DB_NAME: department_db
+        DB_USERNAME: admin_user
+        DB_PASSWORD: password99
+    depends_on:
+      - postgres
+    networks:
+      - postgres
+
   postgres:
     container_name: postgres
     image: postgres
     environment:
+      POSTGRES_DB: department_db
       POSTGRES_USER: admin_user
       POSTGRES_PASSWORD: password99
       PGDATA: /data/postgres
