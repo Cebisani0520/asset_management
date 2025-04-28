@@ -9,6 +9,9 @@ COPY pom.xml ./pom.xml
 # Copy the common-lib module
 COPY common-lib/ ./common-lib/
 
+# Copy the eureka-server module
+COPY eureka-server/ ./eureka-server/
+
 # Copy the department-service module
 COPY department-service/ ./department-service/
 
