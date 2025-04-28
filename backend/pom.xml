@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-<!--	<parent>-->
-<!--		<groupId>org.springframework.boot</groupId>-->
-<!--		<artifactId>spring-boot-starter-parent</artifactId>-->
-<!--		<version>3.3.4</version>-->
-<!--		<relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
-<!--	</parent>-->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.4.5</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
 	<groupId>za.co</groupId>
 	<artifactId>asset_management</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -39,11 +39,17 @@
 		<java.version>21</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<spring-boot-dependencies.version>3.3.4</spring-boot-dependencies.version>
-		<spring.boot.maven.plugin.version>3.3.4</spring.boot.maven.plugin.version>
+		<maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
+		<spring-boot-dependencies.version>3.4.5</spring-boot-dependencies.version>
+		<spring.boot.maven.plugin.version>3.4.5</spring.boot.maven.plugin.version>
+		<spring-cloud.version>2024.0.0</spring-cloud.version>
+		<springdoc.openapi.version>2.8.5</springdoc.openapi.version>
+		<mapstruct-dependency.version>1.5.5.Final</mapstruct-dependency.version>
+		<lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
 		<lombok.version>1.18.34</lombok.version>
-		<spring-kafka.version>3.9.0</spring-kafka.version>
+		<spring-kafka.version>3.3.3</spring-kafka.version>
 		<postgresql.version>42.7.3</postgresql.version>
+		<flywaydb.version>10.20.1</flywaydb.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -73,8 +79,9 @@
 	</dependencies>
 
 	<dependencyManagement>
+		<!-- Children can optionally include these without specifying versions -->
 		<dependencies>
-			<!-- Children can optionally include these without specifying versions -->
+			<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
@@ -82,29 +89,98 @@
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
-			<!-- PostgreSQL -->
+			<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies -->
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
 			<dependency>
 				<groupId>org.postgresql</groupId>
 				<artifactId>postgresql</artifactId>
 				<version>${postgresql.version}</version>
 			</dependency>
-			<!-- Kafka Dependencies -->
+			<!-- https://mvnrepository.com/artifact/org.springframework.kafka/spring-kafka -->
 			<dependency>
 				<groupId>org.springframework.kafka</groupId>
 				<artifactId>spring-kafka</artifactId>
 				<version>${spring-kafka.version}</version>
 			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
+			<dependency>
+				<groupId>org.mapstruct</groupId>
+				<artifactId>mapstruct</artifactId>
+				<version>${mapstruct-dependency.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok-mapstruct-binding -->
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok-mapstruct-binding</artifactId>
+				<version>${lombok-mapstruct-binding.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui -->
+			<dependency>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+				<version>${springdoc.openapi.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-database-postgresql -->
+			<dependency>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-database-postgresql</artifactId>
+				<version>${flywaydb.version}</version>
+				<scope>runtime</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring.boot.maven.plugin.version}</version>
-			</plugin>
-		</plugins>
+		<pluginManagement>
+			<!-- Spring Boot Plugin -->
+			<plugins>
+				<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-maven-plugin -->
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+					<version>${spring.boot.maven.plugin.version}</version>
+				</plugin>
+				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven.compiler.plugin.version}</version>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+						<parameters>true</parameters> <!-- allows @PathVariable to resolve names -->
+						<!-- Enable annotation processing -->
+						<annotationProcessorPaths>
+							<!-- Lombok must come before MapStruct -->
+							<path>
+								<groupId>org.projectlombok</groupId>
+								<artifactId>lombok</artifactId>
+								<version>${lombok.version}</version>
+							</path>
+							<!-- This is important for Lombok and MapStruct to work together -->
+							<path>
+								<groupId>org.projectlombok</groupId>
+								<artifactId>lombok-mapstruct-binding</artifactId>
+								<version>${lombok-mapstruct-binding.version}</version>
+							</path>
+							<!-- MapStruct processor comes after Lombok -->
+							<path>
+								<groupId>org.mapstruct</groupId>
+								<artifactId>mapstruct-processor</artifactId>
+								<version>${mapstruct-dependency.version}</version>
+							</path>
+						</annotationProcessorPaths>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 </project>
