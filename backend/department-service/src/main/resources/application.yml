@@ -26,6 +26,14 @@ spring:
     hibernate:
         ddl_auto: none # Need to change 'update' to 'none' when using Flyway.
     show-sql: true
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka}
+    fetch-registry: true
+    register-with-eureka: true
+    enabled: true
+
 
 #server:
 #  port: 8080

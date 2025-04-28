@@ -5,17 +5,32 @@ services:
       context: .
       dockerfile: department-service/Dockerfile
     ports:
-      - "8080:8080"
+      - "0:8080" # Replica instances will be available on a random port in the host
     environment:
         DB_HOST: postgres
         DB_PORT: 5432
         DB_NAME: management_db
         DB_USERNAME: admin_user
         DB_PASSWORD: password99
+        EUREKA_SERVER_URL: http://eureka-server:8761/eureka
     depends_on:
       - postgres
+      - eureka-server
     networks:
+      - spring
       - postgres
+    deploy:
+      replicas: 1
+
+  eureka-server:
+      container_name: eureka-server
+      build:
+        context: .
+        dockerfile: eureka-server/Dockerfile
+      ports:
+        - "8761:8761"
+      networks:
+        - spring
 
   postgres:
     container_name: postgres
