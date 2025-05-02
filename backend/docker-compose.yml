@@ -1,4 +1,3 @@
-#version: '3.8'
 services:
   department-service:
     build:
@@ -13,12 +12,11 @@ services:
         DB_USERNAME: admin_user
         DB_PASSWORD: password99
         EUREKA_SERVER_URL: http://eureka-server:8761/eureka
-        SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
-        KAFKA_TOPIC_DEPARTMENT_EVENTS: department-events
     depends_on:
       - postgres
       - eureka-server
       - kafka
+      # - schemaregistry
     networks:
       - spring
       - postgres
@@ -103,6 +101,21 @@ services:
     networks:
       - broker
 
+  # schemaregistry:
+  #   container_name: schemaregistry
+  #   image: confluentinc/cp-schema-registry:5.4.10
+  #   ports:
+  #     - 18085:8085
+  #   environment:
+  #     SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: "zookeeper:2181"
+  #     SCHEMA_REGISTRY_HOST_NAME: schemaregistry
+  #     SCHEMA_REGISTRY_LISTENERS: "http://0.0.0.0:8085"
+  #   depends_on:
+  #     - zookeeper
+  #   networks:
+  #     - broker
+  #   restart: always
+
   kafdrop:
     container_name: kafdrop
     image: obsidiandynamics/kafdrop:latest
@@ -110,10 +123,11 @@ services:
       - "19000:9000"
     environment:
       KAFKA_BROKERCONNECT: kafka:9092
+      # CMD_ARGS: "--message.format=AVRO --message.keyFormat=DEFAULT --schemaregistry.connect=http://schemaregistry:8085"
       KAFDROP_SERVER_PORT: 19000
-      CMD_ARGS: "--message.format=AVRO --message.keyFormat=DEFAULT"
     depends_on:
       - kafka
+      # - schemaregistry
     networks:
       - broker
 
