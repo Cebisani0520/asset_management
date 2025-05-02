@@ -27,7 +27,12 @@ spring:
         ddl_auto: none # Need to change 'update' to 'none' when using Flyway.
     show-sql: true
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers:
+      - ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+      - kafka:9092
+    topic:
+      department-events: ${KAFKA_TOPIC_DEPARTMENT_EVENTS:department-events}
+
 eureka:
   client:
     service-url:
@@ -41,10 +46,6 @@ eureka:
 #  port: 8080
 #  servlet:
 #    context-path: /api
-
-kafka:
-  topic:
-    department-events: ${KAFKA_TOPIC_DEPARTMENT_EVENTS:department-events}
 
 springdoc:
   api-docs:

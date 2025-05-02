@@ -10,7 +10,10 @@ import za.co.common.dto.department.DepartmentCreateDto;
 import za.co.common.dto.department.DepartmentDto;
 import za.co.common.dto.department.DepartmentUpdateDto;
 import za.co.common.dto.department.exception.DepartmentNotFoundException;
+import za.co.common.enums.EventTypes;
+import za.co.common.events.DepartmentEvent;
 import za.co.department.entity.Department;
+import za.co.department.kafka.DepartmentEventPublisher;
 import za.co.department.mapper.DepartmentMapper;
 import za.co.department.repository.DepartmentRepository;
 
@@ -21,28 +24,22 @@ public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
     private final DepartmentMapper departmentMapper;
-//    private final KafkaTemplate<String, Object> kafkaTemplate;
-//    @Value("${kafka.topic.department-events}")
-//    private String departmentEventsTopic;
+    private final DepartmentEventPublisher departmentEventPublisher;
 
     @Transactional
     public DepartmentDto createDepartment(DepartmentCreateDto departmentCreateDto) {
+
         Department department = departmentMapper.toEntity(departmentCreateDto);
 
         log.info("Saving department...");
         Department savedDepartment = departmentRepository.save(department);
         log.info("Successfully saved to department to database.");
 
-        return departmentMapper.mapToDto(savedDepartment);
-
-        //FIXME:
         //Publish Kafka Event
-//        publishDepartmentEvent(
-//                EventTypes.CREATED,
-//                savedDepartment.getId(),
-//                savedDepartment.getName(),
-//                savedDepartment.getDescription()
-//        );
+        DepartmentEvent departmentEvent = departmentMapper.toEvent(department, EventTypes.CREATED);
+        departmentEventPublisher.publish(departmentEvent);
+
+        return departmentMapper.mapToDto(savedDepartment);
 
     }
     
@@ -80,17 +77,12 @@ public class DepartmentService {
 
         log.info("Successfully updated department in database.");
 
-        return departmentMapper.mapToDto(updatedDepartment);
-
         //FIXME:
         //Publish Kafka Event
-//        publishDepartmentEvent(
-//                EventTypes.UPDATED,
-//                savedDepartment.getId(),
-//                savedDepartment.getName(),
-//                savedDepartment.getDescription()
-//        );
+        DepartmentEvent departmentEvent = departmentMapper.toEvent(department, EventTypes.UPDATED);
+        departmentEventPublisher.publish(departmentEvent);
 
+        return departmentMapper.mapToDto(updatedDepartment);
     }
 
     @Transactional
@@ -99,32 +91,16 @@ public class DepartmentService {
         Department department = departmentRepository.findById(id)
                .orElseThrow(() -> new DepartmentNotFoundException("Department not found with id: " + id));
 
-        // Store department details before deletion for event
-//        Long departmentId = department.getId();
-//        String departmentName = department.getName();
-//        String departmentDescription = department.getDescription();
+        // Create the event before deletion.
+        DepartmentEvent departmentEvent = departmentMapper.toEvent(department, EventTypes.DELETED);
 
         departmentRepository.delete(department);
 
         log.info("Successfully deleted department in database.");
 
-        //FIXME:
-        // Publish Event
-//        publishDepartmentEvent(
-//               EventTypes.DELETED,
-//                savedDepartment.getId(),
-//                savedDepartment.getName(),
-//                savedDepartment.getDescription()
-//        );
+        // Publish Kafka Event
+        departmentEventPublisher.publish(departmentEvent);
 
     }
-
-//    private void publishDepartmentEvent(EventTypes eventType, Long id, String name, String description) {
-//
-//        DepartmentEvent departmentEvent =  new DepartmentEvent(eventType, id, name, description);
-//        kafkaTemplate.send(departmentEventsTopic, departmentEvent);
-//        log.info("Published department event: {}", departmentEvent);
-//
-//    }
 
 }

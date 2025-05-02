@@ -4,6 +4,8 @@ import org.mapstruct.*;
 import za.co.common.dto.department.DepartmentCreateDto;
 import za.co.common.dto.department.DepartmentDto;
 import za.co.common.dto.department.DepartmentUpdateDto;
+import za.co.common.enums.EventTypes;
+import za.co.common.events.DepartmentEvent;
 import za.co.department.entity.Department;
 
 @Mapper(componentModel = "spring")
@@ -18,5 +20,14 @@ public interface DepartmentMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(DepartmentUpdateDto updateDto, @MappingTarget Department department);
+
+    default DepartmentEvent toEvent(Department department, EventTypes eventType) {
+        return new DepartmentEvent(
+                eventType,
+                department.getId(),
+                department.getName(),
+                department.getDescription()
+        );
+    }
 
 }
