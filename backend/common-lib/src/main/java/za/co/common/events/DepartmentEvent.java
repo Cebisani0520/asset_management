@@ -15,11 +15,11 @@ public class DepartmentEvent extends BaseEvent {
     private Long departmentId;
     private String name;
     private String description;
-    private EventTypes departmentEventType;
+    private EventTypes eventType;
 
     public DepartmentEvent(EventTypes type, Long departmentId, String name, String description) {
         super(UUID.randomUUID(), "DEPARTMENT_EVENT", LocalDateTime.now());
-        this.departmentEventType = type;
+        this.eventType = type;
         this.departmentId = departmentId;
         this.name = name;
         this.description = description;

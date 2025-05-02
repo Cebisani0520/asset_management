@@ -12,6 +12,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public abstract class BaseEvent {
     private UUID eventId;
-    private String eventType;
-    private LocalDateTime timestamp;
+    private String eventName;
+    private LocalDateTime eventTimestamp;
 }
