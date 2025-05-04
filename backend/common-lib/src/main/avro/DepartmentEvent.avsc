@@ -1,0 +1,14 @@
+{
+    "namespace": "za.co.department.avro",
+    "type": "record",
+    "name": "DepartmentEventAvro",
+    "fields": [
+        { "name": "eventId", "type": "string" },
+        { "name": "eventType", "type": { "type": "enum", "name": "EventType", "symbols": ["CREATED", "UPDATED", "DELETED"] } },
+        { "name": "eventSource", "type": "string" },
+        { "name": "eventTimestamp", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+        { "name": "departmentId", "type": "long" },
+        { "name": "name", "type": ["null", "string"], "default": null },
+        { "name": "description", "type": ["null", "string"], "default": null }
+     ]
+}
