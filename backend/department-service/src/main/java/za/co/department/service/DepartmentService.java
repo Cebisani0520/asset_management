@@ -10,10 +10,9 @@ import za.co.common.dto.department.DepartmentCreateDto;
 import za.co.common.dto.department.DepartmentDto;
 import za.co.common.dto.department.DepartmentUpdateDto;
 import za.co.common.dto.department.exception.DepartmentNotFoundException;
-import za.co.common.enums.EventTypes;
-import za.co.common.events.DepartmentEvent;
+import za.co.department.avro.DepartmentEventAvro;
+import za.co.department.avro.EventType;
 import za.co.department.entity.Department;
-import za.co.department.kafka.DepartmentEventPublisher;
 import za.co.department.mapper.DepartmentMapper;
 import za.co.department.repository.DepartmentRepository;
 
@@ -24,7 +23,7 @@ public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;
     private final DepartmentMapper departmentMapper;
-    private final DepartmentEventPublisher departmentEventPublisher;
+    private final DepartmentProducerService departmentProducerService;
 
     @Transactional
     public DepartmentDto createDepartment(DepartmentCreateDto departmentCreateDto) {
@@ -36,8 +35,8 @@ public class DepartmentService {
         log.info("Successfully saved to department to database.");
 
         //Publish Kafka Event
-        DepartmentEvent departmentEvent = departmentMapper.toEvent(department, EventTypes.CREATED);
-        departmentEventPublisher.publish(departmentEvent);
+        DepartmentEventAvro departmentEvent = departmentMapper.toEvent(department, EventType.CREATED);
+        departmentProducerService.publish(departmentEvent);
 
         return departmentMapper.mapToDto(savedDepartment);
 
@@ -77,10 +76,9 @@ public class DepartmentService {
 
         log.info("Successfully updated department in database.");
 
-        //FIXME:
         //Publish Kafka Event
-        DepartmentEvent departmentEvent = departmentMapper.toEvent(department, EventTypes.UPDATED);
-        departmentEventPublisher.publish(departmentEvent);
+        DepartmentEventAvro departmentEvent = departmentMapper.toEvent(department, EventType.UPDATED);
+        departmentProducerService.publish(departmentEvent);
 
         return departmentMapper.mapToDto(updatedDepartment);
     }
@@ -92,14 +90,14 @@ public class DepartmentService {
                .orElseThrow(() -> new DepartmentNotFoundException("Department not found with id: " + id));
 
         // Create the event before deletion.
-        DepartmentEvent departmentEvent = departmentMapper.toEvent(department, EventTypes.DELETED);
+        DepartmentEventAvro departmentEvent = departmentMapper.toEvent(department, EventType.DELETED);
 
         departmentRepository.delete(department);
 
         log.info("Successfully deleted department in database.");
 
         // Publish Kafka Event
-        departmentEventPublisher.publish(departmentEvent);
+        departmentProducerService.publish(departmentEvent);
 
     }
 
